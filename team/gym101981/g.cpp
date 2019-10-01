@@ -2,17 +2,22 @@
 #include <cstdio>
 using namespace std;
 #define maxn 200020
+
 void radix(int *str, int *a, int *b, int n, int m) {
     static int count[maxn];
     memset(count, 0, sizeof(count));
     for(int i = 0; i < n;  i++) ++count[str[a[i]]];
     for(int i = 1; i <= m; i++) count[i] += count[i-1];
-    for(int i = n-1; i >= 0; --i) b[--count[str[a[i]]]] = a[i];
+    for(int i = n-1; i >= 0; i--) b[--count[str[a[i]]]] = a[i];
 }
 
 void suffix_array(int *str, int *sa, int n, int m) {
     static int rank[maxn], a[maxn], b[maxn];
-    for(int i = 0; i < n; ++i) rank[sa[i]] = rank[sa[i-1]] + (str[sa[i]]!=str[sa[i-1]]);
+    for(int i = 0; i < n; i++) rank[i] = i;
+    radix(str, rank, sa, n, m);
+
+    rank[sa[0]] = 0;
+    for(int i = 0; i < n; i++) rank[sa[i]] = rank[sa[i-1]] + (str[sa[i]]!=str[sa[i-1]]);
     for(int i = 0; 1<<i < n; i++) {
         for(int j = 0; j < n; j++) {
             a[i] = rank[j] + 1;
@@ -28,6 +33,19 @@ void suffix_array(int *str, int *sa, int n, int m) {
     }
 }
 
+void calc_height(int *str, int *sa, int *h, int n) {
+    static int rank[maxn];
+    int k = 0;
+    h[0] = 0;
+    for(int i = 0; i < n; i++) rank[sa[i]] = i;
+    for(int i = 0; i < n; i++) {
+        k = k == 0 ? 0 : k - 1;
+        if(rank[i] != 0)
+            while (str[i+k] == str[sa[rank[i]-1] + k]) ++k;
+        h[rank[i]] = k;
+    }
+}
+
 int main() {
-    
+    return 0;
 }
