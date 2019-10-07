@@ -53,7 +53,7 @@ sturct suffix_array {
             if(k) k--;
             j = sa[rank[i] - 1];
             while(str[i+k] == str[j+k] && i+k < n && j+k < n) k++;
-            height[rank[i]]
+            height[rank[i]] = k;
         }
     }
 
@@ -66,3 +66,8 @@ sturct suffix_array {
         get_sa(); get_height();
     }
 };
+
+int main() {
+    scanf();
+    return 0;
+}
