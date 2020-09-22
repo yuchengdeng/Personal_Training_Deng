@@ -15,8 +15,33 @@ bool x01, x02, x04, x09, x10, x12, y01, y03, y05, y07, y09, y11, y13, y15, u01, 
 unsigned short key24 [260], key13[260], key1, key2, key3, key4;
 unsigned int key;
 bool flag;
-unsigned char kr, u, v;
-
+unsigned short kr, u, v, uv[65536], vw[65536];
+void prework()
+{
+    unsigned short upr2, vpr2, wpr2;
+    for(unsigned short upr = 0; upr < 65536; upr++)
+    {
+        vpr2 = 0;
+        upr2 = upr;
+        for(unsigned short i = 0; i <= 3; i++) 
+        {
+            vpr2 |= ((pls[upr2&0x000f]) << (i<<2));
+            upr2 = upr2 >> 4;
+        }
+        uv[upr] = vpr2;
+    }
+    for(unsigned short vpr = 0; vpr < 65536; vpr++)
+    {
+        vpr2 = vpr;
+        wpr2 = 0;
+        for(int i = 0; i < 16; i++)
+        {
+            wpr2 |= (vpr2 & 0x1) << pip[i];
+            vpr2 = vpr2 >> 1;
+        }
+        vw[vpr] = wpr2;
+    }
+}
 void read()
 {
     char c;
@@ -46,25 +71,14 @@ bool cmp(unsigned short x, unsigned short y)
 }
 unsigned short spn(unsigned short w, unsigned int K)
 {
-
     for(int r = 0; r <= 3; r++)
     {
         kr = K >> (16 - (r<<2));
         u = w ^ kr;
-        v = 0;
-        for(int i = 0; i <= 3; i++)
-        {
-            v |= (pis[u&0x000f]) << (i<<2);
-            u = u >> 4;
-        }
-        w = 0;
+        v = uv[u];
         if(r < 3)
         {
-            for(int i = 0; i < 16; i++)
-            {
-                w |= (v & 0x1) << pip[i]; //这里是因为pip置换是对称的。
-                v = v >> 1;
-            }
+            w = vw[v];
         }
         else
         {
