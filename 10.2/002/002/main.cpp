@@ -1,15 +1,15 @@
-#include <iostream>
+//#include <iostream>
 #include <cstdio>
 #include <cstring>
 #include <algorithm>
 #include <cmath>
 using namespace std;
 #define maxm 8010
-#define top1 100
-#define top2 100
-#define top3 8000
-const unsigned short pis[16] = {14, 4, 13, 1, 2, 15, 11, 8, 3, 10, 6, 12, 5, 9, 0, 7};
-const unsigned short pis2[16] = {0xe, 0x3, 0x4, 0x8, 0x1, 0xc, 0xa, 0xf, 0x7, 0xd, 0x9, 0x6, 0xb, 0x2, 0x0, 0x5};
+#define top1 256
+#define top2 2
+#define top3 2
+const unsigned char pis[16] = {14, 4, 13, 1, 2, 15, 11, 8, 3, 10, 6, 12, 5, 9, 0, 7};
+const unsigned char pis2[16] = {0xe, 0x3, 0x4, 0x8, 0x1, 0xc, 0xa, 0xf, 0x7, 0xd, 0x9, 0x6, 0xb, 0x2, 0x0, 0x5};
 const unsigned short pip[16] = { 0, 4, 8, 12, 1, 5, 9, 13, 2, 6, 10, 14, 3, 7, 11, 15};
 unsigned short x[maxm], y[maxm], xx, yy;
 int cnt1[16][16], cnt2[16][16], cnt3[16][16], n;
@@ -18,7 +18,7 @@ bool x05, x07, x08, u06, y08, y14, y16, u08, u14, u16;
 bool x01, x02, x04, x09, x10, x12, y01, y03, y05, y06, y07, y09, y11, y13, y15, u01, u03, u05, u07, u09, u11, u13, u15;
 unsigned short key24 [260], key13[260];
 unsigned char key1, key2, key3, key4;
-unsigned int key;
+unsigned int key, key1234;
 bool flag;
 unsigned short kr, u, v, uv[65536], vu[65536], vw[65536];
 void prework()
@@ -70,12 +70,12 @@ void read()
 }
 bool cmp1(unsigned short x, unsigned short y)
 {
-    unsigned short xa = x >> 4, xb = (x << 4) >> 8, ya = y >> 4, yb = (y << 4) >> 8;
+    unsigned short xa = (x >> 4)& 0xf, xb = x & 0xf, ya = (y >> 4)&0xf, yb = y & 0xf;
     return cnt1[xa][xb] > cnt1[ya][yb];
 }
 bool cmp2(unsigned short x, unsigned short y)
 {
-    unsigned short xa = x >> 4, xb = (x << 4) >> 8, ya = y >> 4, yb = (y << 4) >> 8;
+    unsigned short xa = (x >> 4)& 0xf, xb = x & 0xf, ya = (y >> 4)&0xf, yb = y & 0xf;
     return cnt2[xa][xb] > cnt2[ya][yb];
 }
 unsigned short spn(unsigned short w, unsigned int K)
@@ -108,6 +108,8 @@ int main()
         memset(x, 0,sizeof(x));
         memset(y, 0,sizeof(y));
         memset(cnt1, 0,sizeof(cnt1));
+        memset(cnt2, 0,sizeof(cnt2));
+        memset(cnt3, 0,sizeof(cnt3));
         read();
         for(int i = 0; i < 8000; i++)
         {
@@ -129,9 +131,9 @@ int main()
                     u_2 = pis2[y_2 ^ k2]; u_4 = pis2[y_4 ^ k4];
                     u16 = u_4 & 0x1;
                     u14 = (u_4 >> 2) & 0x1;
-                    u08 = u_2;
+                    u08 = u_2 & 0x1;
                     u06 = (u_2 >> 2) & 0x1;
-                    if((x05^x07^x08^u06^u08^u14^u16) == 1)
+                    if((x05^x07^x08^u06^u08^u14^u16) == 0)
                         cnt1[k2][k4]++;
                 }
         }
@@ -141,16 +143,19 @@ int main()
                 if(cnt1[k2][k4] < 4000)
                     cnt1[k2][k4] = 8000 - cnt1[k2][k4];
             }
-        for(int i = 0; i < 16; i++)
+        /*for(int i = 0; i < 16; i++)
             for(int j = 0; j < 16; j++)
                 printf("%01x %01x %d\n", i, j, cnt1[i][j]);
-        for(int i = 0; i < 256; i++) key24[i] = i;
+        printf("\n");*/
+        for(unsigned short i = 0; i < 256; i++) key24[i] = i;
         sort(key24, key24+256, cmp1);
+
         for(int k24 = 0; k24 < top1; k24++)
         {
             memset(cnt2, 0,sizeof(cnt2));
             memset(cnt3, 0,sizeof(cnt3));
-            key2 = key24[k24] >> 4; key4 = key24[k24] & 0xf;
+            key2 = (key24[k24] >> 4)& 0xf; key4 = key24[k24] & 0xf;
+            //printf("\n\n%01x %01x %d\n\n", key2, key4, cnt1[key2][key4]);
             for(int i = 0; i < 8000; i++)
             {
                 xx = x[i]; yy = y[i];
@@ -168,7 +173,7 @@ int main()
                     for(unsigned char k3 = 0; k3 < 16; k3++)
                     {
                         u_1 = pis2[y_1 ^ k1]; u_2 = pis2[y_2 ^ key2];
-                        u_2 = pis2[y_3 ^ k3]; u_4 = pis2[y_4 ^ key4];
+                        u_3 = pis2[y_3 ^ k3]; u_4 = pis2[y_4 ^ key4];
                         u15 = (u_4 >> 1) & 0x1;
                         u13 = (u_4 >> 3) & 0x1;
                         u11 = (u_3 >> 1) & 0x1;
@@ -177,9 +182,9 @@ int main()
                         u05 = (u_2 >> 3) & 0x1;
                         u03 = (u_1 >> 1) & 0x1;
                         u01 = (u_1 >> 3) & 0x1;
-                        if((x01^x02^x04^u01^u05^u09^u13) == 1)
+                        if((x01^x02^x04^u01^u05^u09^u13) == 0)
                             cnt2[k1][k3] ++;
-                        if((x09^x10^x12^u03^u07^u11^u15) == 1)
+                        if((x09^x10^x12^u03^u07^u11^u15) == 0)
                             cnt3[k1][k3]++;
                     }
             }
@@ -190,16 +195,18 @@ int main()
                     if(cnt3[k1][k3] <4000) cnt3[k1][k3] = 8000 - cnt3[k1][k3];
                     cnt2[k1][k3] += cnt3[k1][k3];
                 }
-            for(int i = 0; i < 256; i++) key13[i] = i;
+            for(unsigned short i = 0; i < 256; i++) key13[i] = i;
             sort(key13, key13+256, cmp2);
 
             for(int k13 = 0; k13 < top2; k13++)
             {
-                key1 = key13[k13] >> 4; key3 = key13[k13] & 0xf;
-                key = (key1<<12)|(key2<<8)|(key3<<4)|key4;
+                key1 = (key13[k13] >> 4)&0xf; key3 = key13[k13] & 0xf;
+                //printf("%01x %01x %d\n", key1, key3, cnt2[key1][key3]);
+                key1234 = 0x00000000|(key1<<12)|(key2<<8)|(key3<<4)|key4;
                 for(unsigned int key0 = 0; key0 < 65536 ; key0++)
                 {
-                    key |= (key0 << 16);
+
+                    key = key1234|(key0 << 16);
                     flag = 0;
                     for(int i = 0; i < top3; i++)
                     {
@@ -215,7 +222,7 @@ int main()
             }
             if(!flag) break;
         }
-        printf("%08x", key);
+        printf("%08x\n", key);
     }
     return 0;
 }
