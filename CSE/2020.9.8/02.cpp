@@ -10,8 +10,8 @@ const unsigned short pis2[16] = {0xe, 0x3, 0x4, 0x8, 0x1, 0xc, 0xa, 0xf, 0x7, 0x
 const unsigned short pip[16] = { 0, 4, 8, 12, 1, 5, 9, 13, 2, 6, 10, 14, 3, 7, 11, 15};
 unsigned short x[maxm], y[maxm], xx, yy;
 int cnt1[16][16], cnt2[16][16], cnt3[16][16];
-bool x05, x07, x08, u06, y08, y14, y16, u08, u14, u16;
-bool x01, x02, x04, x09, x10, x12, y01, y03, y05, y07, y09, y11, y13, y15, u01, u03, u05, u07, u09, u11, u13, u15;
+unsigned char x05, x07, x08, u06, y08, y14, y16, u08, u14, u16;
+unsigned char x01, x02, x04, x09, x10, x12, y01, y03, y05, y07, y09, y11, y13, y15, u01, u03, u05, u07, u09, u11, u13, u15;
 unsigned short key24 [260], key13[260], key1, key2, key3, key4;
 unsigned int key;
 bool flag;
@@ -25,7 +25,7 @@ void prework()
         upr2 = upr;
         for(unsigned short i = 0; i <= 3; i++) 
         {
-            vpr2 |= ((pls[upr2&0x000f]) << (i<<2));
+            vpr2 |= ((pis[upr2&0x000f]) << (i<<2));
             upr2 = upr2 >> 4;
         }
         uv[upr] = vpr2;
@@ -63,11 +63,15 @@ void read()
         c = getchar();
     }
 }
-bool cmp(unsigned short x, unsigned short y)
+bool cmp1(unsigned short x, unsigned short y)
 {
-    xa = x >> 4; xb = (x << 4) >> 8;
-    ya = y >> 4; yb = (y << 4) >> 8;
-    return cnt1[xa][ya] > cnt2[xa][ya];
+    unsigned short xa = x >> 4, xb = (x << 4) >> 8, ya = y >> 4, yb = (y << 4) >> 8;
+    return cnt1[xa][xb] > cnt1[ya][yb];
+}
+bool cmp2(unsigned short x, unsigned short y)
+{
+    unsigned short xa = x >> 4, xb = (x << 4) >> 8, ya = y >> 4, yb = (y << 4) >> 8;
+    return cnt2[xa][xb] > cnt2[ya][yb];
 }
 unsigned short spn(unsigned short w, unsigned int K)
 {
@@ -120,7 +124,7 @@ int main()
                     u14 = y14 ^ (k4 >> 2); 
                     u08 = y08 ^ k2;
                     u06 = y06 ^ (k2 >> 2);
-                    if(x05^x07^x08^u06^u08^u14^u16 == 1)
+                    if(((x05^x07^x08^u06^u08^u14^u16)&(0x01)) == 1)
                         cnt1[k2][k4]++;   
                 }
         }
@@ -166,13 +170,13 @@ int main()
                         u05 = y05^(key2 >> 3);
                         u03 = y03^(k1 >> 1);
                         u01 = y01^(k1 >> 3);
-                        if(x01^x02^x04^u01^u05^u09^u13 == 1)
+                        if(((x01^x02^x04^u01^u05^u09^u13)&(0x01)) == 1)
                             cnt2[k1][k3] ++;
-                        if(x09^x10^x12^u03^u07^u11^u15 == 1)
+                        if(((x09^x10^x12^u03^u07^u11^u15)&(0X01)) == 1)
                             cnt3[k1][k3]++;                 
                     }    
             }
-            for(int k1 - 0; k1 < 16; k1++)
+            for(int k1 = 0; k1 < 16; k1++)
                 for(int k3 = 0; k3 < 16; k3++)
                 {
                     if(cnt2[k1][k3] <4000) cnt2[k1][k3] = 8000 - cnt2[k1][k3];

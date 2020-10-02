@@ -1,0 +1,8 @@
+# depslib dependency file v1.0
+1601631612 source:c:\users\admin\documents\github\personal_training_deng\10.2\002\002\main.cpp
+	<iostream>
+	<cstdio>
+	<cstring>
+	<algorithm>
+	<cmath>
+
