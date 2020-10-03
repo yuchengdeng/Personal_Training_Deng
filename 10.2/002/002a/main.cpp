@@ -126,9 +126,9 @@ int main()
                 cnt[i][j]  = abs(cnt[i][j] - 4000);
                 cnt3[i][j] = abs(cnt3[i][j] - 4000);
             }
-        for(int i = 0; i < 16; i++)
+        /*for(int i = 0; i < 16; i++)
             for(int j = 0; j < 16; j++)
-                printf("%01x %01x %d\n", i, j, cnt[i][j]);
+                printf("%01x %01x %d\n", i, j, cnt[i][j]);*/
         t = 0;
         for (int i = 0; i < 16; i++)
             for (int j = 0; j < 16; j++) {
@@ -140,7 +140,7 @@ int main()
 
         //根据剩余两条链对K1,K3进行处理，
         ppp = 0;
-        for (int N = 0; N < 256; N++) { //根据Count从高到底枚举，假定K2,K4已知
+        for (int N = 0; N <256; N++) { //根据Count从高到底枚举，假定K2,K4已知
             if (ppp) break;
             memset(cnt1, 0, sizeof(cnt1));
             memset(cnt2, 0, sizeof(cnt2));

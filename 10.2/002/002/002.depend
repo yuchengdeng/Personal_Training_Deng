@@ -1,6 +1,5 @@
 # depslib dependency file v1.0
-1601645755 source:c:\users\admin\documents\github\personal_training_deng\10.2\002\002\main.cpp
-	<iostream>
+1601712499 source:c:\users\admin\documents\github\personal_training_deng\10.2\002\002\main.cpp
 	<cstdio>
 	<cstring>
 	<algorithm>
